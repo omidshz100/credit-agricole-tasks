@@ -13,3 +13,4 @@ Interactive Mode: (we can then write the query code in the terminal )
                             sqlite3 "Credit-Agricole.db"
 
 
+sqlite3 "Credit-Agricole.db" ".schema"
