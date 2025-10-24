@@ -1,0 +1,15 @@
+
+
+Directly run Queries from terminal 
+
+cd "/Users/omidshojaeianzanjani/Desktop/programmings /hackathon/credit-agricole-tasks"
+         && 
+            sqlite3 "Credit-Agricole.db" "SELECT COUNT(*) 
+                                        as total_records FROM Attendance;"
+
+Interactive Mode: (we can then write the query code in the terminal )
+"/Users/omidshojaeianzanjani/Desktop/programmings /hackathon/credit-agricole-tasks" 
+                        && 
+                            sqlite3 "Credit-Agricole.db"
+
+
