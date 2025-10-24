@@ -1,0 +1,30 @@
+# Credit Agricole Document Management System - Requirements
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Data validation and serialization
+pydantic[email]==2.5.0
+
+# PDF processing libraries
+PyPDF2==3.0.1
+pdfplumber==0.10.3
+
+# Database (SQLite is built into Python, but these help with connection handling)
+aiosqlite==0.19.0
+
+# Additional utilities
+python-dateutil==2.8.2
+typing-extensions==4.8.0
+
+# Development dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# File handling utilities
+pathlib2==2.3.7.post1
+
+# Optional: For better error handling and logging
+loguru==0.7.2
