@@ -242,6 +242,68 @@ class DocumentFilter(BaseModel):
     date_to: Optional[datetime] = None
     filename_contains: Optional[str] = None
 
+class SearchRequest(BaseModel):
+    """Advanced search request model"""
+    query: str = Field(..., min_length=1, max_length=500, description="Search query")
+    candidate_id: Optional[int] = Field(None, description="Search within specific candidate's documents")
+    extracted_only: bool = Field(True, description="Search only extracted documents")
+    limit: int = Field(20, ge=1, le=100, description="Maximum results to return")
+    offset: int = Field(0, ge=0, description="Results offset for pagination")
+    include_highlights: bool = Field(True, description="Include text highlights in results")
+    highlight_length: int = Field(150, ge=50, le=500, description="Length of highlight context")
+
+class SearchHighlight(BaseModel):
+    """Search result highlight"""
+    text: str = Field(..., description="Highlighted text snippet")
+    start_position: int = Field(..., description="Position in document where highlight starts")
+
+class SearchResult(BaseModel):
+    """Individual search result"""
+    document_id: int
+    candidate_id: int
+    candidate_name: str
+    original_filename: str
+    relevance_score: float = Field(..., ge=0, le=100, description="Relevance score (0-100)")
+    match_count: int = Field(..., ge=1, description="Number of matches found")
+    highlights: List[SearchHighlight] = []
+    upload_date: datetime
+    extraction_date: Optional[datetime]
+    download_url: str
+    file_size: Optional[int]
+
+class SearchResponse(BaseModel):
+    """Search results response"""
+    query: str
+    candidate_id: Optional[int]
+    total_results: int
+    search_time_ms: int
+    page: int = Field(1, ge=1)
+    per_page: int = Field(20, ge=1, le=100)
+    total_pages: int
+    has_next: bool
+    has_previous: bool
+    results: List[SearchResult]
+    search_suggestions: List[str] = []
+
+class SearchHistoryRecord(BaseModel):
+    """Search history record"""
+    id: int
+    query: str
+    candidate_id: Optional[int]
+    results_count: int
+    search_time_ms: int
+    search_timestamp: datetime
+    search_type: str
+
+class SearchStatistics(BaseModel):
+    """Search usage statistics"""
+    total_searches: int
+    unique_queries: int
+    average_search_time_ms: float
+    popular_queries: List[Dict[str, Any]]
+    search_trends: List[Dict[str, Any]]
+    generated_at: datetime
+
 class PaginationParams(BaseModel):
     """Pagination parameters"""
     page: int = Field(1, ge=1, description="Page number (1-based)")

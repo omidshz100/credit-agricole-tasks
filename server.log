@@ -1,0 +1,22 @@
+INFO:     Will watch for changes in these directories: ['/Users/omidshojaeianzanjani/Desktop/programmings /hackathon/credit-agricole-tasks']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7165] using WatchFiles
+INFO:     Started server process [7264]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+🚀 Starting Credit Agricole Document Management API...
+✅ All database tables exist
+📁 Uploads directory ready
+✅ Database healthy - 10 tables found
+🎉 API startup complete!
+INFO:     127.0.0.1:56652 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56656 - "POST /api/search/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63162 - "GET /api/search/documents/legacy?search_term=ios&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63349 - "GET /api/search/documents/legacy?search_term=ios%2C%20Dishwasher&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63357 - "GET /api/search/documents/legacy?search_term=ios%2C%20Dishwasher&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63361 - "GET /api/search/documents/legacy?search_term=ios%2CDishwasher&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63362 - "GET /api/search/documents/legacy?search_term=Dishwasher&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63363 - "GET /api/search/documents/legacy?search_term=Dishwasher%2C%20iOS&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63369 - "GET /api/search/documents/legacy?search_term=Dishwasher%2C%20iOS&extracted_only=true&limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63421 - "POST /api/search/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63440 - "GET /api/candidates/2 HTTP/1.1" 200 OK

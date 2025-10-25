@@ -123,6 +123,20 @@ def create_all_tables(db_path: Optional[str] = None) -> bool:
             )
         """)
         
+        # 7. Search_History table - tracks search operations for analytics
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS Search_History (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                query TEXT NOT NULL,
+                candidate_id INTEGER NULL,
+                results_count INTEGER DEFAULT 0,
+                search_time_ms INTEGER,
+                search_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                search_type TEXT DEFAULT 'content_search',
+                FOREIGN KEY (candidate_id) REFERENCES Candidates(id) ON DELETE SET NULL
+            )
+        """)
+        
         # Create indexes for better query performance
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_candidates_email ON Candidates(email)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_documents_candidate_id ON Documents(candidate_id)")
@@ -130,6 +144,11 @@ def create_all_tables(db_path: Optional[str] = None) -> bool:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_upload_history_candidate ON File_Upload_History(candidate_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_extraction_history_candidate ON Extraction_History(candidate_id)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_extraction_history_document ON Extraction_History(document_id)")
+        
+        # Search performance indexes
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_document_content_text ON Document_Content(extracted_text)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_search_history_query ON Search_History(query)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_search_history_timestamp ON Search_History(search_timestamp)")
         
         conn.commit()
         conn.close()
@@ -142,7 +161,9 @@ def create_all_tables(db_path: Optional[str] = None) -> bool:
         print("   - File_Upload_History (upload tracking)")
         print("   - File_Upload_Details (per-file details)")
         print("   - Extraction_History (extraction tracking)")
+        print("   - Search_History (search analytics)")
         print("🔍 Existing Attendance table preserved")
+        print("🚀 Search performance indexes added")
         
         return True
         
@@ -170,7 +191,8 @@ def check_tables_exist(db_path: Optional[str] = None) -> dict:
         'Document_Content',
         'File_Upload_History',
         'File_Upload_Details',
-        'Extraction_History'
+        'Extraction_History',
+        'Search_History'
     ]
     
     try:

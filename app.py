@@ -4,7 +4,7 @@ Main FastAPI application with all endpoints for candidate and document managemen
 """
 
 import os
-from fastapi import FastAPI, HTTPException, status, UploadFile, File, Depends, Request
+from fastapi import FastAPI, HTTPException, status, UploadFile, File, Depends, Request, Query
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exception_handlers import http_exception_handler
@@ -20,6 +20,8 @@ from models.pydantic_models import (
     # File models
     FileUploadResponse, FileListResponse, DocumentInfo, DocumentContent,
     FileDownloadResponse, ExtractionRequest, ExtractionResponse,
+    # Search models
+    SearchRequest, SearchResponse, SearchResult, SearchHistoryRecord, SearchStatistics,
     # Utility models
     APIStatus, ErrorResponse, DocumentFilter, PaginationParams,
     SuccessResponse, CreatedResponse, UpdatedResponse, DeletedResponse
@@ -28,6 +30,7 @@ from services.user_service import UserService
 from services.file_upload_service import FileUploadService
 from services.file_access_service import FileAccessService
 from services.extraction_service import ExtractionService
+from services.search_service import SearchService
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -280,17 +283,45 @@ async def retry_failed_extraction(candidate_id: int, document_id: int, retry_att
     return ExtractionService.retry_failed_extraction(candidate_id, document_id, retry_attempt)
 
 # ============================================================================
-# SEARCH ENDPOINTS
+# SEARCH ENDPOINTS - Advanced document content search with analytics
 # ============================================================================
 
-@app.get("/api/search/documents")
-async def search_documents(
+@app.post("/api/search/documents", response_model=SearchResponse)
+async def search_documents(search_request: SearchRequest) -> SearchResponse:
+    """Advanced document content search with ranking and highlights"""
+    return SearchService.search_documents(search_request)
+
+@app.get("/api/search/documents/quick", response_model=List[Dict[str, Any]])
+async def quick_search_documents(
+    query: str = Query(..., description="Search query"),
+    candidate_id: Optional[int] = Query(None, description="Filter by candidate ID"),
+    limit: int = Query(10, ge=1, le=50, description="Number of results")
+) -> List[Dict[str, Any]]:
+    """Quick search for simple queries"""
+    return SearchService.quick_search(query, candidate_id, limit)
+
+@app.get("/api/search/history", response_model=List[SearchHistoryRecord])
+async def get_search_history(
+    candidate_id: Optional[int] = Query(None, description="Filter by candidate ID"),
+    limit: int = Query(50, ge=1, le=200, description="Number of history records")
+) -> List[SearchHistoryRecord]:
+    """Get search history"""
+    return SearchService.get_search_history(candidate_id, limit)
+
+@app.get("/api/search/statistics", response_model=SearchStatistics)
+async def get_search_statistics() -> SearchStatistics:
+    """Get search usage statistics and analytics"""
+    return SearchService.get_search_statistics()
+
+# Legacy search endpoint for backward compatibility
+@app.get("/api/search/documents/legacy")
+async def search_documents_legacy(
     search_term: str,
     candidate_id: Optional[int] = None,
     extracted_only: bool = True,
     limit: int = 50
 ):
-    """Search through document content"""
+    """Legacy search endpoint - use POST /api/search/documents instead"""
     return FileAccessService.search_documents(search_term, candidate_id, extracted_only, limit)
 
 # ============================================================================
